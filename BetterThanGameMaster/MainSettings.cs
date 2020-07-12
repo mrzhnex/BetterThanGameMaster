@@ -11,12 +11,13 @@ namespace BetterThanGameMaster
             SetEvents = new SetEvents();
             Events.RoundStartEvent += SetEvents.OnRoundStart;
             Events.WaitingForPlayersEvent += SetEvents.OnWaitingForPlayers;
-            Events.DoorInteractEvent += SetEvents.OnDoorAccess;
+            Events.DoorInteractEvent += SetEvents.OnDoorInteract;
             Events.PlayerHurtEvent += SetEvents.OnPlayerHurt;
             Events.CheckEscapeEvent += SetEvents.OnCheckEscape;
-            Events.AnnounceScpTerminationEvent += SetEvents.OnScpDeathAnnouncement;
-            Events.PlayerSpawnEvent += SetEvents.OnSpawn;
-            Events.ConsoleCommandEvent += SetEvents.OnCallCommand;
+            Events.AnnounceScpTerminationEvent += SetEvents.OnAnnounceScpTermination;
+            Events.PlayerSpawnEvent += SetEvents.OnPlayerSpawn;
+            Events.ConsoleCommandEvent += SetEvents.OnConsoleCommand;
+            Events.SpawnRagdollEvent += SetEvents.OnSpawnRagdoll;
             Log.Info(getName + " on");
         }
 
@@ -27,9 +28,10 @@ namespace BetterThanGameMaster
             Events.DoorInteractEvent -= SetEvents.OnDoorAccess;
             Events.PlayerHurtEvent -= SetEvents.OnPlayerHurt;
             Events.CheckEscapeEvent -= SetEvents.OnCheckEscape;
-            Events.AnnounceScpTerminationEvent -= SetEvents.OnScpDeathAnnouncement;
-            Events.PlayerSpawnEvent -= SetEvents.OnSpawn;
-            Events.ConsoleCommandEvent -= SetEvents.OnCallCommand;
+            Events.AnnounceScpTerminationEvent -= SetEvents.OnAnnounceScpTermination;
+            Events.PlayerSpawnEvent -= SetEvents.OnPlayerSpawn;
+            Events.ConsoleCommandEvent -= SetEvents.OnConsoleCommand;
+            Events.SpawnRagdollEvent -= SetEvents.OnSpawnRagdoll; 
             Log.Info(getName + " off");
         }
 

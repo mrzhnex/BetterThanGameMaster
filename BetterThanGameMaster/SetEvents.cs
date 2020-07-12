@@ -9,7 +9,7 @@ namespace BetterThanGameMaster
     public class SetEvents
     {
 
-        public void OnCallCommand(ConsoleCommandEvent ev)
+        public void OnConsoleCommand(ConsoleCommandEvent ev)
         {
             if (!Global.can_use_commands)
             {
@@ -87,6 +87,19 @@ namespace BetterThanGameMaster
                     ev.ReturnMessage = Global._outofscp173;
                     return;
                 }
+            }
+        }
+
+        internal void OnDoorInteract(ref DoorInteractionEvent ev)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        internal void OnSpawnRagdoll(SpawnRagdollEvent ev)
+        {
+            if (ev.Killer.GetRole() == RoleType.Scp096)
+            {
+                ev.Allow = false;
             }
         }
 
@@ -195,7 +208,7 @@ namespace BetterThanGameMaster
             }
         }
 
-        public void OnSpawn(PlayerSpawnEvent ev)
+        public void OnPlayerSpawn(PlayerSpawnEvent ev)
         {
             if (ev.Player.gameObject.GetComponent<SetRoleOnSpawn>())
             {
@@ -248,7 +261,7 @@ namespace BetterThanGameMaster
             }
         }
 
-        public void OnScpDeathAnnouncement(AnnounceScpTerminationEvent ev)
+        public void OnAnnounceScpTermination(AnnounceScpTerminationEvent ev)
         {
             ev.Allow = false;
         }
