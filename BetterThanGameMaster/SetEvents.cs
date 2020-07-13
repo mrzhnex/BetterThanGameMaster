@@ -6,10 +6,9 @@ using EXILED.Extensions;
 
 namespace BetterThanGameMaster
 {
-    public class SetEvents
+    internal class SetEvents
     {
-
-        public void OnConsoleCommand(ConsoleCommandEvent ev)
+        internal void OnConsoleCommand(ConsoleCommandEvent ev)
         {
             if (!Global.can_use_commands)
             {
@@ -103,7 +102,7 @@ namespace BetterThanGameMaster
             }
         }
 
-        public void OnRoundStart()
+        internal void OnRoundStart()
         {
             RoundSummary.RoundLock = true;
             Global.can_use_commands = true;
@@ -114,7 +113,7 @@ namespace BetterThanGameMaster
             }
         }
 
-        public void OnWaitingForPlayers()
+        internal void OnWaitingForPlayers()
         {
             Door temp173 = null;
             Door temp049 = null;
@@ -166,37 +165,7 @@ namespace BetterThanGameMaster
             Global.timeToOpen173 = 180.0f;
         }
 
-        public void OnDoorAccess(ref DoorInteractionEvent ev)
-        {
-            if (ev.Door.DoorName.ToLower().Contains("surface_gate"))
-            {
-                ev.Allow = false;
-            }
-            if (ev.Door.DoorName.ToLower().Contains("372"))
-            {
-                if (!accessCards372.Contains(ev.Player.GetCurrentItem().id) || ev.Player.inventory.curItem == ItemType.None)
-                {
-                    ev.Allow = false;
-                }
-            }
-            if (ev.Player.GetCurrentItem().id == ItemType.KeycardGuard && ev.Player.inventory.curItem != ItemType.None)
-            {
-                if (ev.Door.DoorName.ToLower().Contains("012"))
-                {
-                    ev.Allow = true;
-                }
-                if (ev.Door.DoorName.ToLower().Contains("049"))
-                {
-                    ev.Allow = true;
-                }
-                if (ev.Door.DoorName.ToLower().Contains("armory") && ev.Door.DoorName.ToLower().Contains("nuke"))
-                {
-                    ev.Allow = true;
-                }
-            }
-        }
-
-        public void OnPlayerHurt(ref PlayerHurtEvent ev)
+        internal void OnPlayerHurt(ref PlayerHurtEvent ev)
         {
             if (ev.Attacker.GetRole() == RoleType.Scp93953 || ev.Attacker.GetRole() == RoleType.Scp93989)
             {
@@ -208,18 +177,9 @@ namespace BetterThanGameMaster
             }
         }
 
-        public void OnPlayerSpawn(PlayerSpawnEvent ev)
+        internal void OnPlayerSpawn(PlayerSpawnEvent ev)
         {
-            if (ev.Player.gameObject.GetComponent<SetRoleOnSpawn>())
-            {
-                Object.Destroy(ev.Player.gameObject.GetComponent<SetRoleOnSpawn>());
-            }
-            if (ev.Player.GetRole() == RoleType.Scp106 || ev.Player.GetRole() == RoleType.Scp096)
-            {
-                ev.Player.gameObject.AddComponent<SetRoleOnSpawn>();
-                ev.Player.gameObject.GetComponent<SetRoleOnSpawn>().MaxHealth = 99999;
-            }
-            else if (ev.Player.GetRole() == RoleType.ClassD)
+            if (ev.Player.GetRole() == RoleType.ClassD)
             {
                 ev.Player.gameObject.AddComponent<SetRoleOnSpawn>();
                 ev.Player.gameObject.GetComponent<SetRoleOnSpawn>().AddItems.Add(ItemType.Flashlight);
@@ -229,21 +189,6 @@ namespace BetterThanGameMaster
                         ev.Player.gameObject.AddComponent<DoorAddComponent>();
                 }
             }
-            else if (ev.Player.GetRole() == RoleType.NtfCadet || ev.Player.GetRole() == RoleType.NtfLieutenant || ev.Player.GetRole() == RoleType.FacilityGuard)
-            {
-                ev.Player.gameObject.AddComponent<SetRoleOnSpawn>();
-                ev.Player.gameObject.GetComponent<SetRoleOnSpawn>().RemoveItems.Add(ItemType.WeaponManagerTablet);
-            }
-            else if (ev.Player.GetRole() == RoleType.NtfScientist)
-            {
-                ev.Player.gameObject.AddComponent<SetRoleOnSpawn>();
-                ev.Player.gameObject.GetComponent<SetRoleOnSpawn>().RemoveItems.Add(ItemType.WeaponManagerTablet);
-            }
-            else if (ev.Player.GetRole() == RoleType.Scientist)
-            {
-                ev.Player.gameObject.AddComponent<SetRoleOnSpawn>();
-                ev.Player.gameObject.GetComponent<SetRoleOnSpawn>().AddItems.Add(ItemType.Radio);
-            }
             else if ((ev.Player.GetRole() == RoleType.Scp93953 || ev.Player.GetRole() == RoleType.Scp93989) && !Global.OpenOtherSCP)
             {
                 if (ev.Player.gameObject.GetComponent<DoorAddComponent>() == null)
@@ -251,7 +196,7 @@ namespace BetterThanGameMaster
             }
         }
 
-        public void OnCheckEscape(ref CheckEscapeEvent ev)
+        internal void OnCheckEscape(ref CheckEscapeEvent ev)
         {
             if (ev.Player.GetRole() != RoleType.FacilityGuard && ev.Player.GetTeam() != Team.MTF)
             {
@@ -261,25 +206,9 @@ namespace BetterThanGameMaster
             }
         }
 
-        public void OnAnnounceScpTermination(AnnounceScpTerminationEvent ev)
+        internal void OnAnnounceScpTermination(AnnounceScpTerminationEvent ev)
         {
             ev.Allow = false;
         }
-
-        private readonly List<ItemType> accessCards372 = new List<ItemType>()
-        {
-            ItemType.KeycardContainmentEngineer,
-            ItemType.KeycardFacilityManager,
-            ItemType.KeycardGuard,
-            ItemType.KeycardJanitor,
-            ItemType.KeycardScientistMajor,
-            ItemType.KeycardNTFCommander,
-            ItemType.KeycardNTFLieutenant,
-            ItemType.KeycardO5,
-            ItemType.KeycardScientist,
-            ItemType.KeycardSeniorGuard,
-            ItemType.KeycardZoneManager,
-            ItemType.KeycardChaosInsurgency
-        };
     }
 }

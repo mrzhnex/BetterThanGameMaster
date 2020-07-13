@@ -11,7 +11,6 @@ namespace BetterThanGameMaster
             SetEvents = new SetEvents();
             Events.RoundStartEvent += SetEvents.OnRoundStart;
             Events.WaitingForPlayersEvent += SetEvents.OnWaitingForPlayers;
-            Events.DoorInteractEvent += SetEvents.OnDoorInteract;
             Events.PlayerHurtEvent += SetEvents.OnPlayerHurt;
             Events.CheckEscapeEvent += SetEvents.OnCheckEscape;
             Events.AnnounceScpTerminationEvent += SetEvents.OnAnnounceScpTermination;
@@ -25,7 +24,6 @@ namespace BetterThanGameMaster
         {
             Events.RoundStartEvent -= SetEvents.OnRoundStart;
             Events.WaitingForPlayersEvent -= SetEvents.OnWaitingForPlayers;
-            Events.DoorInteractEvent -= SetEvents.OnDoorAccess;
             Events.PlayerHurtEvent -= SetEvents.OnPlayerHurt;
             Events.CheckEscapeEvent -= SetEvents.OnCheckEscape;
             Events.AnnounceScpTerminationEvent -= SetEvents.OnAnnounceScpTermination;
