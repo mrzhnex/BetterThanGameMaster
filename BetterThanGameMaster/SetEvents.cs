@@ -96,9 +96,13 @@ namespace BetterThanGameMaster
 
         internal void OnSpawnRagdoll(SpawnRagdollEvent ev)
         {
-            if (ev.Killer.GetRole() == RoleType.Scp096)
+            if (ev.Killer != null && ev.Killer.GetRole() == RoleType.Scp096)
             {
                 ev.Allow = false;
+                for (int i = 1; i < 4; i++)
+                {
+                    ev.Player.gameObject.GetComponent<CharacterClassManager>().RpcPlaceBlood(ev.Player.gameObject.transform.position, 2, i);
+                }
             }
         }
 
@@ -181,8 +185,6 @@ namespace BetterThanGameMaster
         {
             if (ev.Player.GetRole() == RoleType.ClassD)
             {
-                ev.Player.gameObject.AddComponent<SetRoleOnSpawn>();
-                ev.Player.gameObject.GetComponent<SetRoleOnSpawn>().AddItems.Add(ItemType.Flashlight);
                 if (!Global.OpenClassD)
                 {
                     if (ev.Player.gameObject.GetComponent<DoorAddComponent>() == null)
