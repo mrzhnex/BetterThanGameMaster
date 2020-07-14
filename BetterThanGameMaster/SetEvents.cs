@@ -89,11 +89,6 @@ namespace BetterThanGameMaster
             }
         }
 
-        internal void OnDoorInteract(ref DoorInteractionEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
         internal void OnSpawnRagdoll(SpawnRagdollEvent ev)
         {
             if (ev.Killer != null && ev.Killer.GetRole() == RoleType.Scp096)
