@@ -4,8 +4,8 @@ namespace BetterThanGameMaster
 {
     public class MainSettings : Plugin
     {
-        public override string getName => "BetterThanGameMaster";
-        private SetEvents SetEvents;
+        public override string getName => nameof(BetterThanGameMaster);
+        public SetEvents SetEvents { get; set; }
         public override void OnEnable()
         {
             SetEvents = new SetEvents();

@@ -6,7 +6,7 @@ using EXILED.Extensions;
 
 namespace BetterThanGameMaster
 {
-    internal class SetEvents
+    public class SetEvents
     {
         internal void OnConsoleCommand(ConsoleCommandEvent ev)
         {
