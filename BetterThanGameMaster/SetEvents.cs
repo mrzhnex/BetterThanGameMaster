@@ -87,6 +87,97 @@ namespace BetterThanGameMaster
                     return;
                 }
             }
+            if (Vector3.Distance(ev.Player.GetPosition(), GameObject.Find("IntercomMonitor").transform.position) < 9.0f &&
+                Vector3.Distance(ev.Player.GetPosition(), GameObject.Find("IntercomMonitor").transform.position) > 7.5f &&
+                Vector3.Distance(ev.Player.GetPosition(), Global.IntercomDoorPosition) > 14.0f)
+            {
+                if (ev.Command.ToLower() == "ra_diagnosis")
+                {
+                    Global.RemoteControlStage = 1;
+                    ev.ReturnMessage = ".....Сброс процессов системы...........Ошибки не обнаружены......";
+                    ev.Color = "blue";
+                    return;
+                }
+                else if (ev.Command.ToLower() == "ra_retreivelocal1")
+                {
+                    if (Global.RemoteControlStage != 1)
+                    {
+                        ev.ReturnMessage = "В доступе отказано. Запустите диагностику системы.";
+                        ev.Color = "red";
+                        return;
+                    }
+                    Global.RemoteControlStage = 2;
+                    ev.ReturnMessage = "Введите код доступа:";
+                    ev.Color = "yellow";
+                    return;
+                }
+                else if (ev.Command.ToLower() == "ra_retreivecontol1")
+                {
+                    if (Global.RemoteControlStage != 1)
+                    {
+                        ev.ReturnMessage = "В доступе отказано. Запустите диагностику системы.";
+                        ev.Color = "red";
+                        return;
+                    }
+                    Global.RemoteControlStage = 3;
+                    ev.ReturnMessage = "Введите код доступа:";
+                    ev.Color = "yellow";
+                    return;
+                }
+                else if (ev.Command.ToLower() == "mike16alpha02")
+                {
+                    if (Global.RemoteControlStage == 2)
+                    {
+                        Global.RemoteControlStage = 0;
+                        if (Global.IsRemoteControl)
+                        {
+                            Global.IsRemoteControl = false;
+                            NineTailedFoxAnnouncer.singleton.ServerOnlyAddGlitchyPhrase("Gate A and Gate B lockdown sequence disengaged", 0.0f, 0.0f);
+                            ev.ReturnMessage = "Удаленный доступ был отключен";
+                            ev.Color = "blue";
+                            return;
+                        }
+                        else
+                        {
+                            ev.ReturnMessage = "Удаленный доступ уже выключен.";
+                            ev.Color = "red";
+                            return;
+                        }
+                    }
+                    else if (Global.RemoteControlStage == 3)
+                    {
+                        Global.RemoteControlStage = 0;
+                        if (Global.IsRemoteControl)
+                        {
+                            ev.ReturnMessage = "Удаленный доступ уже включен";
+                            ev.Color = "red";
+                            return;
+                        }
+                        else
+                        {
+                            Global.IsRemoteControl = true;
+                            NineTailedFoxAnnouncer.singleton.ServerOnlyAddGlitchyPhrase("Gate A and Gate B lockdown sequence initiated", 0.0f, 0.0f);
+                            ev.ReturnMessage = "Удаленный доступ был включен.";
+                            ev.Color = "blue";
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        ev.ReturnMessage = "....Обнаружен незарегистрированный набор символов........Команда не была выполнена.........";
+                        ev.Color = "red";
+                        return;
+                    }
+                }
+            }
+        }
+
+        internal void OnDoorInteractEvent(ref DoorInteractionEvent ev)
+        {
+            if (Global.IsRemoteControl && (ev.Door.DoorName.ToLower().Contains("gate_b") || ev.Door.DoorName.ToLower().Contains("gate_a")))
+            {
+                ev.Allow = false;
+            }
         }
 
         internal void OnSpawnRagdoll(SpawnRagdollEvent ev)
@@ -109,6 +200,15 @@ namespace BetterThanGameMaster
             {
                 GameObject.FindWithTag("FemurBreaker").AddComponent<OpenDoorsOnTime>();
                 GameObject.FindWithTag("FemurBreaker").AddComponent<CheckCustomEscape>();
+            }
+            Global.IntercomPosition = GameObject.Find("IntercomMonitor").transform.position;
+            foreach (Door door in Map.Doors)
+            {
+                if (door.DoorName.ToLower().Contains("intercom"))
+                {
+                    Global.IntercomDoorPosition = door.gameObject.transform.position;
+                    break;
+                }
             }
         }
 

@@ -17,6 +17,7 @@ namespace BetterThanGameMaster
             Events.PlayerSpawnEvent += SetEvents.OnPlayerSpawn;
             Events.ConsoleCommandEvent += SetEvents.OnConsoleCommand;
             Events.SpawnRagdollEvent += SetEvents.OnSpawnRagdoll;
+            Events.DoorInteractEvent += SetEvents.OnDoorInteractEvent;
             Log.Info(getName + " on");
         }
 
@@ -29,7 +30,8 @@ namespace BetterThanGameMaster
             Events.AnnounceScpTerminationEvent -= SetEvents.OnAnnounceScpTermination;
             Events.PlayerSpawnEvent -= SetEvents.OnPlayerSpawn;
             Events.ConsoleCommandEvent -= SetEvents.OnConsoleCommand;
-            Events.SpawnRagdollEvent -= SetEvents.OnSpawnRagdoll; 
+            Events.SpawnRagdollEvent -= SetEvents.OnSpawnRagdoll;
+            Events.DoorInteractEvent -= SetEvents.OnDoorInteractEvent;
             Log.Info(getName + " off");
         }
 

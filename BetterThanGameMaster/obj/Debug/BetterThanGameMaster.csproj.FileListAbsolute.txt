@@ -407,3 +407,4 @@ E:\SCP SL plugins\BetterThanGameMaster\BetterThanGameMaster\obj\Debug\BetterThan
 E:\SCP SL plugins\BetterThanGameMaster\BetterThanGameMaster\obj\Debug\BetterThanGameMaster.csproj.CopyComplete
 E:\SCP SL plugins\BetterThanGameMaster\BetterThanGameMaster\obj\Debug\BetterThanGameMaster.dll
 E:\SCP SL plugins\BetterThanGameMaster\BetterThanGameMaster\obj\Debug\BetterThanGameMaster.pdb
+E:\SCP SL plugins\BetterThanGameMaster\BetterThanGameMaster\obj\Debug\BetterThanGameMaster.csproj.CoreCompileInputs.cache

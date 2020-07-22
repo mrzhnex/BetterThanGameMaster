@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace BetterThanGameMaster
 {
@@ -55,5 +56,11 @@ namespace BetterThanGameMaster
             "Site Director", "Facility Engineer", "O5 Council", "Apollo-3 \"Game Wardens\"", "Commander of Apollo-3",
             "Sigma-9 \"Valkyries\"", "Commander of Alpha-1", "Commander of Epsilon-11", "Epsilon-11 \"Nine Tailed Fox\""
         };
+
+        public static bool IsRemoteControl = false;
+
+        public static int RemoteControlStage = 0;
+        public static Vector3 IntercomPosition = Vector3.zero;
+        public static Vector3 IntercomDoorPosition = Vector3.zero;
     }
 }
