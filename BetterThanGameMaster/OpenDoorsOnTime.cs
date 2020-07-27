@@ -1,4 +1,4 @@
-﻿using EXILED.Extensions;
+﻿using Exiled.API.Features;
 using UnityEngine;
 
 namespace BetterThanGameMaster
@@ -36,24 +36,24 @@ namespace BetterThanGameMaster
                 Global.Open173 = true;
                 Global.gate173.Networklocked = false;
                 Global.gate173.NetworkisOpen = true;
-                foreach (ReferenceHub p in Player.GetHubs())
+                foreach (Player p in Player.List)
                 {
-                    if (p.GetTeam() == Team.SCP && p.GetRole() != RoleType.Scp079)
+                    if (p.Team == Team.SCP && p.Role != RoleType.Scp079)
                     {
                         p.ClearBroadcasts();
-                        p.Broadcast(20, "SCP: прошло 3 минуты", true);
+                        p.Broadcast(20, "SCP: прошло 3 минуты", Broadcast.BroadcastFlags.Normal);
                     }
                 }
             }
             if (Timer > Global.timeTenMinuts && !Global.AnonceTenMinuts)
             {
                 Global.AnonceTenMinuts = true;
-                foreach (ReferenceHub p in Player.GetHubs())
+                foreach (Player p in Player.List)
                 {
-                    if (p.GetTeam() == Team.SCP && p.GetRole() != RoleType.Scp079)
+                    if (p.Team == Team.SCP && p.Role != RoleType.Scp079)
                     {
                         p.ClearBroadcasts();
-                        p.Broadcast(20, "SCP: прошло 10 минут", true);
+                        p.Broadcast(20, "SCP: прошло 10 минут", Broadcast.BroadcastFlags.Normal);
                     }
                 }
 
@@ -61,12 +61,12 @@ namespace BetterThanGameMaster
             if (Timer > Global.timeFifrteenMinuts && !Global.AnonceFifteenMinuts)
             {
                 Global.AnonceFifteenMinuts = true;
-                foreach (ReferenceHub p in Player.GetHubs())
+                foreach (Player p in Player.List)
                 {
-                    if (p.GetRole() == RoleType.Scp106)
+                    if (p.Role == RoleType.Scp106)
                     {
                         p.ClearBroadcasts();
-                        p.Broadcast(20, "SCP: прошло 15 минут", true);
+                        p.Broadcast(20, "SCP: прошло 15 минут", Broadcast.BroadcastFlags.Normal);
                     }
                 }
             }

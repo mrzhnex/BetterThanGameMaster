@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Linq;
-using EXILED.Extensions;
+using Exiled.API.Features;
 
 namespace BetterThanGameMaster
 {
     public class DoorAddComponent : MonoBehaviour
     {
-        private ReferenceHub Target;
+        private Player Target;
         private float Timer = 0.0f;
 
         public void Start()
         {
-            Target = Player.GetPlayer(gameObject);
+            Target = Player.Get(gameObject);
         }
 
         public void Update()
@@ -19,14 +19,14 @@ namespace BetterThanGameMaster
             Timer += Time.deltaTime;
             if (Timer > 0.2f)
             {
-                switch (Target.GetRole())
+                switch (Target.Role)
                 {
                     case RoleType.ClassD:
                         if (!Global.OpenClassD)
                         {
-                            foreach (Door door in Map.Doors.Where(x => x.DoorName == "" && x.permissionLevel == "").ToList())
+                            foreach (Door door in Map.Doors.Where(x => x.DoorName == "").ToList())
                             {
-                                if (Vector3.Distance(Target.GetPosition(), door.gameObject.transform.position) < Global.distanceForClassD)
+                                if (Vector3.Distance(Target.Position, door.gameObject.transform.position) < Global.distanceForClassD)
                                 {
                                     if (!Global.classDDoors.Contains(door))
                                         Global.classDDoors.Add(door);
@@ -39,9 +39,9 @@ namespace BetterThanGameMaster
                     case RoleType.Scp93989:
                         if (!Global.OpenOtherSCP)
                         {
-                            foreach (Door door in Map.Doors.Where(x => x.DoorName == "" && x.permissionLevel == "").ToList())
+                            foreach (Door door in Map.Doors.Where(x => x.DoorName == "").ToList())
                             {
-                                if (Vector3.Distance(Target.GetPosition(), door.gameObject.transform.position) < Global.distanceForSCP939)
+                                if (Vector3.Distance(Target.Position, door.gameObject.transform.position) < Global.distanceForSCP939)
                                 {
                                     if (!Global.scp939Doors.Contains(door))
                                         Global.scp939Doors.Add(door);
@@ -54,6 +54,5 @@ namespace BetterThanGameMaster
                 Destroy(gameObject.GetComponent<DoorAddComponent>());
             }
         }
-
     }
 }

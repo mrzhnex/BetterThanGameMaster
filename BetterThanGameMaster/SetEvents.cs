@@ -1,29 +1,99 @@
 ﻿using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using EXILED;
-using EXILED.Extensions;
+using Exiled.Events.EventArgs;
+using Exiled.API.Features;
 
 namespace BetterThanGameMaster
 {
     public class SetEvents
     {
-        internal void OnConsoleCommand(ConsoleCommandEvent ev)
+        internal void OnRoundStarted()
+        {
+            RoundSummary.RoundLock = true;
+            Global.can_use_commands = true;
+            if (GameObject.FindWithTag("FemurBreaker") != null)
+            {
+                GameObject.FindWithTag("FemurBreaker").AddComponent<OpenDoorsOnTime>();
+            }
+            Global.IntercomPosition = GameObject.Find("IntercomMonitor").transform.position;
+            foreach (Door door in Map.Doors)
+            {
+                if (door.DoorName.ToLower().Contains("intercom"))
+                {
+                    Global.IntercomDoorPosition = door.gameObject.transform.position;
+                    break;
+                }
+            }
+        }
+
+        internal void OnHurting(HurtingEventArgs ev)
+        {
+            if (ev.Attacker != null && (ev.Attacker.Role == RoleType.Scp93953 || ev.Attacker.Role == RoleType.Scp93989))
+            {
+                ev.Amount = 300.0f;
+            }
+            if ((ev.Target.Role == RoleType.Scp173 || ev.Target.Role == RoleType.Scp106 || ev.Target.Role == RoleType.Scp096) && ev.DamageType == DamageTypes.Tesla)
+            {
+                ev.Amount = 0.0f;
+            }
+        }
+
+        internal void OnAnnouncingScpTermination(AnnouncingScpTerminationEventArgs ev)
+        {
+            ev.IsAllowed = false;
+        }
+
+        internal void OnChangingRole(ChangingRoleEventArgs ev)
+        {
+            if (ev.NewRole == RoleType.ClassD && !Global.OpenClassD)
+            {
+                if (ev.Player.GameObject.GetComponent<DoorAddComponent>() == null)
+                    ev.Player.GameObject.AddComponent<DoorAddComponent>();
+            }
+            else if ((ev.NewRole == RoleType.Scp93953 || ev.NewRole == RoleType.Scp93989) && !Global.OpenOtherSCP)
+            {
+                if (ev.Player.GameObject.GetComponent<DoorAddComponent>() == null)
+                    ev.Player.GameObject.AddComponent<DoorAddComponent>();
+            }
+        }
+
+        internal void OnSpawningRagdoll(SpawningRagdollEventArgs ev)
+        {
+            if (ev.Killer != null && ev.Killer.Role == RoleType.Scp096)
+            {
+                ev.IsAllowed = false;
+                for (int i = 1; i < 4; i++)
+                {
+                    ev.Owner.GameObject.GetComponent<CharacterClassManager>().RpcPlaceBlood(ev.Owner.Position, 2, i);
+                }
+            }
+        }
+
+        internal void OnInteractingDoor(InteractingDoorEventArgs ev)
+        {
+            if (Global.IsRemoteControl && (ev.Door.DoorName.ToLower().Contains("gate_b") || ev.Door.DoorName.ToLower().Contains("gate_a")))
+            {
+                ev.IsAllowed = false;
+            }
+        }
+
+        internal void OnSendingConsoleCommand(SendingConsoleCommandEventArgs ev)
         {
             if (!Global.can_use_commands)
             {
                 ev.ReturnMessage = "Дождитесь начала раунда!";
                 return;
             }
-            else if (ev.Command.ToLower().Contains("contain") && ev.Command.ToLower().Contains("96"))
+            else if (ev.Name.ToLower().Contains("contain") && ev.Name.ToLower().Contains("96"))
             {
-                ReferenceHub scp096 = Player.GetHubs().Where(x => x.GetRole() == RoleType.Scp096).FirstOrDefault();
+                Player scp096 = Player.List.Where(x => x.Role == RoleType.Scp096).FirstOrDefault();
                 if (scp096 == default)
                 {
                     ev.ReturnMessage = Global._outofscp096;
                     return;
                 }
-                if (ev.Player.GetTeam() == Team.SCP)
+                if (ev.Player.Team == Team.SCP)
                 {
                     ev.ReturnMessage = Global._outofscp096;
                     return;
@@ -36,12 +106,12 @@ namespace BetterThanGameMaster
                         return;
                     }
                 }
-                if (Vector3.Distance(ev.Player.GetPosition(), scp096.GetPosition()) < Global.distanceForContain096And173)
+                if (Vector3.Distance(ev.Player.Position, scp096.Position) < Global.distanceForContain096And173)
                 {
 
-                    ev.Player.gameObject.AddComponent<Contain096OwnerComponent>();
-                    ev.Player.gameObject.GetComponent<Contain096OwnerComponent>().owner = ev.Player;
-                    ev.Player.gameObject.GetComponent<Contain096OwnerComponent>().scp096 = scp096;
+                    ev.Player.GameObject.AddComponent<Contain096OwnerComponent>();
+                    ev.Player.GameObject.GetComponent<Contain096OwnerComponent>().owner = ev.Player;
+                    ev.Player.GameObject.GetComponent<Contain096OwnerComponent>().scp096 = scp096;
                     ev.ReturnMessage = Global._successstartcontain096 + Global.time_to_contain_096;
                     return;
                 }
@@ -51,15 +121,15 @@ namespace BetterThanGameMaster
                     return;
                 }
             }
-            else if (ev.Command.ToLower().Contains("contain") && ev.Command.ToLower().Contains("173"))
+            else if (ev.Name.ToLower().Contains("contain") && ev.Name.ToLower().Contains("173"))
             {
-                ReferenceHub scp173 = Player.GetHubs().Where(x => x.GetRole() == RoleType.Scp173).FirstOrDefault();
+                Player scp173 = Player.List.Where(x => x.Role == RoleType.Scp173).FirstOrDefault();
                 if (scp173 == default)
                 {
                     ev.ReturnMessage = Global._outofscp173;
                     return;
                 }
-                if (ev.Player.GetTeam() == Team.SCP)
+                if (ev.Player.Team == Team.SCP)
                 {
                     ev.ReturnMessage = Global._outofscp173;
                     return;
@@ -72,12 +142,12 @@ namespace BetterThanGameMaster
                         return;
                     }
                 }
-                if (Vector3.Distance(ev.Player.GetPosition(), scp173.GetPosition()) < Global.distanceForContain096And173)
+                if (Vector3.Distance(ev.Player.Position, scp173.Position) < Global.distanceForContain096And173)
                 {
 
-                    ev.Player.gameObject.AddComponent<Contain173OwnerComponent>();
-                    ev.Player.gameObject.GetComponent<Contain173OwnerComponent>().owner = ev.Player;
-                    ev.Player.gameObject.GetComponent<Contain173OwnerComponent>().scp173 = scp173;
+                    ev.Player.GameObject.AddComponent<Contain173OwnerComponent>();
+                    ev.Player.GameObject.GetComponent<Contain173OwnerComponent>().owner = ev.Player;
+                    ev.Player.GameObject.GetComponent<Contain173OwnerComponent>().scp173 = scp173;
                     ev.ReturnMessage = Global._successstartcontain173 + Global.time_to_contain_173;
                     return;
                 }
@@ -87,18 +157,18 @@ namespace BetterThanGameMaster
                     return;
                 }
             }
-            if (Vector3.Distance(ev.Player.GetPosition(), GameObject.Find("IntercomMonitor").transform.position) < 9.0f &&
-                Vector3.Distance(ev.Player.GetPosition(), GameObject.Find("IntercomMonitor").transform.position) > 7.5f &&
-                Vector3.Distance(ev.Player.GetPosition(), Global.IntercomDoorPosition) > 14.0f)
+            if (Vector3.Distance(ev.Player.Position, GameObject.Find("IntercomMonitor").transform.position) < 9.0f &&
+                Vector3.Distance(ev.Player.Position, GameObject.Find("IntercomMonitor").transform.position) > 7.5f &&
+                Vector3.Distance(ev.Player.Position, Global.IntercomDoorPosition) > 14.0f)
             {
-                if (ev.Command.ToLower() == "ra_diagnosis")
+                if (ev.Name.ToLower() == "ra_diagnosis")
                 {
                     Global.RemoteControlStage = 1;
                     ev.ReturnMessage = ".....Сброс процессов системы...........Ошибки не обнаружены......";
                     ev.Color = "blue";
                     return;
                 }
-                else if (ev.Command.ToLower() == "ra_retreivelocal1")
+                else if (ev.Name.ToLower() == "ra_retreivelocal1")
                 {
                     if (Global.RemoteControlStage != 1)
                     {
@@ -111,7 +181,7 @@ namespace BetterThanGameMaster
                     ev.Color = "yellow";
                     return;
                 }
-                else if (ev.Command.ToLower() == "ra_retreivecontol1")
+                else if (ev.Name.ToLower() == "ra_retreivecontol1")
                 {
                     if (Global.RemoteControlStage != 1)
                     {
@@ -124,7 +194,7 @@ namespace BetterThanGameMaster
                     ev.Color = "yellow";
                     return;
                 }
-                else if (ev.Command.ToLower() == "mike16alpha02")
+                else if (ev.Name.ToLower() == "mike16alpha02")
                 {
                     if (Global.RemoteControlStage == 2)
                     {
@@ -172,43 +242,13 @@ namespace BetterThanGameMaster
             }
         }
 
-        internal void OnDoorInteractEvent(ref DoorInteractionEvent ev)
+        internal void OnEscaping(EscapingEventArgs ev)
         {
-            if (Global.IsRemoteControl && (ev.Door.DoorName.ToLower().Contains("gate_b") || ev.Door.DoorName.ToLower().Contains("gate_a")))
+            if (ev.Player.Role == RoleType.FacilityGuard || ev.Player.Role == RoleType.ClassD || ev.Player.Role == RoleType.Scientist)
             {
-                ev.Allow = false;
-            }
-        }
-
-        internal void OnSpawnRagdoll(SpawnRagdollEvent ev)
-        {
-            if (ev.Killer != null && ev.Killer.GetRole() == RoleType.Scp096)
-            {
-                ev.Allow = false;
-                for (int i = 1; i < 4; i++)
-                {
-                    ev.Player.gameObject.GetComponent<CharacterClassManager>().RpcPlaceBlood(ev.Player.gameObject.transform.position, 2, i);
-                }
-            }
-        }
-
-        internal void OnRoundStart()
-        {
-            RoundSummary.RoundLock = true;
-            Global.can_use_commands = true;
-            if (GameObject.FindWithTag("FemurBreaker") != null)
-            {
-                GameObject.FindWithTag("FemurBreaker").AddComponent<OpenDoorsOnTime>();
-                GameObject.FindWithTag("FemurBreaker").AddComponent<CheckCustomEscape>();
-            }
-            Global.IntercomPosition = GameObject.Find("IntercomMonitor").transform.position;
-            foreach (Door door in Map.Doors)
-            {
-                if (door.DoorName.ToLower().Contains("intercom"))
-                {
-                    Global.IntercomDoorPosition = door.gameObject.transform.position;
-                    break;
-                }
+                ev.IsAllowed = false;
+                ev.Player.ClearInventory();
+                ev.Player.SetRole(RoleType.Spectator);
             }
         }
 
@@ -262,50 +302,6 @@ namespace BetterThanGameMaster
             Global.timeToOpenClassD = 20.0f;
             Global.timeToOpenOtherSCP = 40.0f;
             Global.timeToOpen173 = 180.0f;
-        }
-
-        internal void OnPlayerHurt(ref PlayerHurtEvent ev)
-        {
-            if (ev.Attacker.GetRole() == RoleType.Scp93953 || ev.Attacker.GetRole() == RoleType.Scp93989)
-            {
-                ev.Amount = 300.0f;
-            }
-            if ((ev.Player.GetRole() == RoleType.Scp173 || ev.Player.GetRole() == RoleType.Scp106 || ev.Player.GetRole() == RoleType.Scp096) && ev.DamageType == DamageTypes.Tesla)
-            {
-                ev.Amount = 0.0f;
-            }
-        }
-
-        internal void OnPlayerSpawn(PlayerSpawnEvent ev)
-        {
-            if (ev.Player.GetRole() == RoleType.ClassD)
-            {
-                if (!Global.OpenClassD)
-                {
-                    if (ev.Player.gameObject.GetComponent<DoorAddComponent>() == null)
-                        ev.Player.gameObject.AddComponent<DoorAddComponent>();
-                }
-            }
-            else if ((ev.Player.GetRole() == RoleType.Scp93953 || ev.Player.GetRole() == RoleType.Scp93989) && !Global.OpenOtherSCP)
-            {
-                if (ev.Player.gameObject.GetComponent<DoorAddComponent>() == null)
-                    ev.Player.gameObject.AddComponent<DoorAddComponent>();
-            }
-        }
-
-        internal void OnCheckEscape(ref CheckEscapeEvent ev)
-        {
-            if (ev.Player.GetRole() != RoleType.FacilityGuard && ev.Player.GetTeam() != Team.MTF)
-            {
-                ev.Player.ClearInventory();
-                ev.Allow = false;
-                ev.Player.SetRole(RoleType.Spectator);
-            }
-        }
-
-        internal void OnAnnounceScpTermination(AnnounceScpTerminationEvent ev)
-        {
-            ev.Allow = false;
         }
     }
 }

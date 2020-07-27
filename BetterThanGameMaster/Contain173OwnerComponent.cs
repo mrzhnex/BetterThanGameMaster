@@ -1,12 +1,12 @@
-﻿using EXILED.Extensions;
+﻿using Exiled.API.Features;
 using UnityEngine;
 
 namespace BetterThanGameMaster
 {
-    class Contain173OwnerComponent : MonoBehaviour
+    public class Contain173OwnerComponent : MonoBehaviour
     {
-        public ReferenceHub owner;
-        public ReferenceHub scp173;
+        public Player owner;
+        public Player scp173;
         private float timer = 0.0f;
         private readonly float time_is_up = 1.0f;
         private float progress = Global.time_to_contain_173;
@@ -19,17 +19,17 @@ namespace BetterThanGameMaster
                 timer = 0f;
                 progress -= time_is_up;
                 owner.ClearBroadcasts();
-                owner.Broadcast(1, Global._successstartcontain173 + progress, true);
+                owner.Broadcast(1, Global._successstartcontain173 + progress, Broadcast.BroadcastFlags.Normal);
                 scp173.ClearBroadcasts();
-                scp173.Broadcast(1, Global._noticescp173, true);
+                scp173.Broadcast(1, Global._noticescp173, Broadcast.BroadcastFlags.Normal);
                 if (progress <= 0.0f)
                 {
                     Contain();
                 }
-                if (Vector3.Distance(transform.position, scp173.GetPosition()) > Global.distanceForContain096And173)
+                if (Vector3.Distance(transform.position, scp173.Position) > Global.distanceForContain096And173)
                 {
                     owner.ClearBroadcasts();
-                    owner.Broadcast(10, Global._failedcontain096and173, true);
+                    owner.Broadcast(10, Global._failedcontain096and173, Broadcast.BroadcastFlags.Normal);
                     Destroy(gameObject.GetComponent<Contain173OwnerComponent>());
                 }
             }

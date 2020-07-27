@@ -30,8 +30,6 @@ namespace BetterThanGameMaster
 
         internal static bool can_use_commands;
 
-        //contain 096
-
         public static float time_to_contain_096 = 15.0f;
         public static string _outofscp096 = "SCP 096 нет рядом";
         public static string _successstartcontain096 = "Вы надеваете мешок на SCP 096. Ждите: ";
@@ -40,7 +38,6 @@ namespace BetterThanGameMaster
         public static string _alreadycontainproccess096 = "Другой гуманоид уже надевает мешок";
         public static string _failedcontain096and173 = "Вы отошли слишком далеко. Процесс прерван";
 
-        //contain 173
         public static float time_to_contain_173 = 40.0f;
         public static string _outofscp173 = "SCP 173 нет рядом";
         public static string _successstartcontain173 = "Вы собираете клетку 173. Ждите: ";
@@ -48,14 +45,6 @@ namespace BetterThanGameMaster
         public static string announcecontainscp173 = "SCP 1 7 3 ContainedSuccessfully . ";
         public static string _alreadycontainproccess173 = "Другой гуманоид уже собирает клетку";
 
-
-        //addwork 17.08.19
-
-        public static readonly List<string> CommandRanksAllowed = new List<string>()
-        {
-            "Site Director", "Facility Engineer", "O5 Council", "Apollo-3 \"Game Wardens\"", "Commander of Apollo-3",
-            "Sigma-9 \"Valkyries\"", "Commander of Alpha-1", "Commander of Epsilon-11", "Epsilon-11 \"Nine Tailed Fox\""
-        };
 
         public static bool IsRemoteControl = false;
 
